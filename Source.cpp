@@ -58,16 +58,53 @@ public:
 int main()
 {
 	srand(time(0));
-	vector<Perceptron> pts;
-	vector<vector<double>> signals = { {0, 0}, {0, 1}, {1, 0}, {1, 1} };
-	Perceptron test_per;
+	vector<double> smg;
+	vector<double> signals = { 100, 32 };
+	vector<Perceptron> perceptrons;
+
+	for (int i = 0; i < 500; ++i)
+	{
+		smg.push_back(0);
+		perceptrons.push_back(Perceptron(2));
+	}
+
+	smg[signals[0] + signals[1]] = 0.5f;
+
+	for (int i = signals[0] + signals[1] - 1; i > 0; --i)
+	{
+		smg[i] = smg[i + 1] - 0.5f / 500;
+		cout << smg[i] << ' ';
+	}
+
+	cout << endl;
+
+	for (int i = signals[0] + signals[1] + 1; i < 500; ++i)
+	{
+		smg[i] = smg[i - 1] + 0.5f / 500;
+		cout << smg[i] << ' ';
+	}
+
+	cout << endl;
+	int agr = 0;
+	int disagr = 0;
 	while (true)
 	{
-		for (int i = 0; i < signals.size(); ++i)
+		for (double i = 0; i < 250; i++)
 		{
-			cout << test_per.process(signals[i]) << ' ';
-			test_per.learn(signals[i][0] * signals[i][1]);
+			for (double j = 0; j < 250; j++)
+			{
+				vector<double> temp_l = { i, j };
+				for (int l = 0; l < 500; l++)
+				{
+					double temp = perceptrons[l].process(temp_l);
+					if (abs(0.5f - temp) == 0.5f) agr++;
+					else disagr++;
+					perceptrons[l].learn(0.5f);
+				}
+			}
 		}
-		cout << endl;
+		cout << agr << ' ' << disagr << endl;
+		agr = 0;
+		disagr = 0;
 	}
 }
